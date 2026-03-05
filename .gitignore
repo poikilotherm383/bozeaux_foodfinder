@@ -1,0 +1,6 @@
+.venv/**
+src/config/config.json
+venv
+.venv
+venv/
+/.venv

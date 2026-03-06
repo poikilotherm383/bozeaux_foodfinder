@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" class="{{ theme }}">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Bozeaux FoodFinder</title>
+
+<link rel="stylesheet" href="/static/style.css">
+
+<script defer src="/static/app.js"></script>
+
+</head>
+
+<body>
+
+<header class="button-bar">
+
+<button id="btn-restaurant"
+        class="action-button"
+        onclick="runSearch('restaurant')">
+
+🍽 Restaurants
+
+</button>
+
+
+<button id="btn-coffee"
+        class="action-button"
+        onclick="runSearch('coffee_shop')">
+
+☕ Coffee
+
+</button>
+
+
+<button id="btn-chicken"
+        class="action-button"
+        onclick="runSearch('chick_fil_a')">
+
+🐔 Chick-Fil-A
+
+</button>
+
+</header>
+
+<!-- debug div, allows text to be displayed on screen in absence of a browser console -->
+<div id="debug" style="color:white;"></div>
+
+<main id="card-container">
+
+<!-- cards inserted dynamically -->
+
+</main>
+
+</body>
+</html>

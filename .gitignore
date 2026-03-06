@@ -4,3 +4,6 @@ venv
 .venv
 venv/
 /.venv
+.gitignore
+old
+src/notes.txt

@@ -35,9 +35,9 @@ def search():
     try:
         results, radius = maps_client.search(lat, lon, place_type)
     except Exception as e:
-        return jsonify({"message": e}), 500
+        return jsonify({"message": str(e)}), 500
     if len(results) == 0:
-        return jsonify({"message": f"No places found within {radius:.0f} miles", "empty": True}), 404
+        return jsonify({"message": f"No places found within {radius:.0f} miles.", "empty": True}), 404
     return jsonify(results)
 
 @app.route("/search_expand", methods = ["POST"])
@@ -51,9 +51,9 @@ def search_expand():
     try:
         results, radius = maps_client.search_expand(lat, lon, place_type)
     except Exception as e:
-        return jsonify({"message": e}), 500
+        return jsonify({"message": str(e)}), 500
     if len(results) == 0:
-        return jsonify({"message": f"No places found within {radius:.0f} miles", "empty": True}), 404
+        return jsonify({"message": f"No places found within {radius:.0f} miles.", "empty": True}), 404
     return jsonify(results)
 
 if __name__ == "__main__":

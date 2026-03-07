@@ -8,3 +8,4 @@ venv/
 old
 src/notes.txt
 TODO.md
+src/app_debug.py

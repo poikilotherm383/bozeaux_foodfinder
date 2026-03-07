@@ -34,8 +34,8 @@ class MapsClient:
         d = 3858.8 * sqrt(dlat ** 2 + (cos(userlat * pi / 180) * dlon) ** 2)
         return d
     
-    def _find_next_closing(self, hours: dict):
-        if not isinstance(hours, dict):
+    def _find_next_closing(self, hours: list):
+        if not isinstance(hours, list):
             return None
         ctime = time.localtime().tm_mday + time.localtime().tm_hour / 24 + time.localtime().tm_min / (24 * 60)
         today = time.localtime().tm_mday
@@ -48,9 +48,10 @@ class MapsClient:
                     "weekday": period["close"]["day"],
                     "timedelta": period["close"]["date"]["day"] + period["close"]["hour"] / 24 + period["close"]["minute"] / (24 * 60) - ctime
                 }
-                for period in hours
+                # ensure only positive timedeltas are captured (i.e. only closings in the future)
+                for period in hours if (period["close"]["date"]["day"] + period["close"]["hour"] / 24 + period["close"]["minute"] / (24 * 60) - ctime) > 0
             ]
-        except KeyError:
+        except KeyError as e:
             return None
         closings.sort(key = lambda x: x["timedelta"])
         hour = closings[0]["hour"]
@@ -63,7 +64,7 @@ class MapsClient:
                 weekday = "tomorrow"
             case _:
                 weekday = self.day_dict[closings[0]["weekday"]]
-        return f"""{hour - 12 if hour > 12 else hour}:{minute} {'PM' if hour // 12 == 1 else 'AM'} {weekday}"""
+        return f"""{hour - 12 if hour > 12 else hour}:{minute:02d} {'PM' if hour // 12 == 1 else 'AM'} {weekday}"""
     
     def _parse_results(self, results: dict, userlat: float, userlon: float):
         open_results = [result for result in results if (result.get("currentOpeningHours") and result["currentOpeningHours"].get("openNow"))]

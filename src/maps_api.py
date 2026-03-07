@@ -8,7 +8,7 @@ def miles_to_m(miles: float):
     return miles * 1.60934e3
 
 class MapsClient:
-    url = "https://places.googleapis.com/v1/places:searchNearby"
+    url = "https://places.googleapis.com/v1/places"
     day_dict = {
         0: "Sunday",
         1: "Monday",
@@ -99,6 +99,7 @@ class MapsClient:
                     }
                 }
             }
+            url = f"{self.url}:searchNearby"
         elif type in ["chick_fil_a"]:
             payload = {
                 "textQuery": "Chick-Fil-A",
@@ -117,6 +118,7 @@ class MapsClient:
                     }
                 }
             }
+            url = f"{self.url}:searchText"
         else:
             raise Exception(f"Unsupported type {type}")
         headers = {
@@ -125,7 +127,7 @@ class MapsClient:
             "X-Goog-FieldMask": "places.displayName,places.formattedAddress,places.currentOpeningHours,places.websiteUri,places.location" # mask the data to return with the request here
         }
         response = requests.post(
-            self.url,
+            url,
             headers = headers,
             json = payload
         )

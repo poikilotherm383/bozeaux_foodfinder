@@ -10,7 +10,7 @@ with open(config_path, mode = "r") as file:
     config = json.load(file)
 static_url_path = config.get("static_url_path")
 
-app = Flask(__name__, static_url_path = static_url_path)
+app = Flask(__name__)
 
 config_path = os.path.join(os.path.dirname(__file__), "config", "config.json")
 

@@ -50,36 +50,40 @@ async function runSearch(type) {
         console.log("Location not ready yet.");
         return;
     }
+    debug("location ready")
 
     const BASE_URL = window.APP_CONFIG.url_root;
 
     setActiveButton(type)
 
     showSkeletons()
+    debug("skeletons shown")
 
-        const payload = {
+    const payload = {
 
-            type: type,
-            lat: userLocation.lat,
-            lon: userLocation.lon
+        type: type,
+        lat: userLocation.lat,
+        lon: userLocation.lon
 
-        }
+    }
+    debug("payload generated")
 
-        const response = await fetch(`${BASE_URL}/search`, {
+    const response = await fetch(`${BASE_URL}/search`, {
 
-            method: "POST",
+        method: "POST",
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+        headers: {
+            "Content-Type": "application/json"
+        },
 
-            body: JSON.stringify(payload)
+        body: JSON.stringify(payload)
 
-        })
+    })
+    debug("payload fetched")
 
-        const data = await response.json()
+    const data = await response.json()
 
-        renderCards(data)
+    renderCards(data)
 
 }
 

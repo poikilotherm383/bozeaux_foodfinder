@@ -12,6 +12,8 @@ static_url_path = config.get("static_url_path")
 
 app = Flask(__name__)
 
+app.config["APPLICATION_ROOT"] = "/foodfinder"
+
 config_path = os.path.join(os.path.dirname(__file__), "config", "config.json")
 
 maps_client = MapsClient(config_path)

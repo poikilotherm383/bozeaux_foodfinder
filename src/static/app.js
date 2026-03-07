@@ -47,17 +47,14 @@ function showSkeletons() {
 async function runSearch(type) {
 
     if (!userLocation) {
-        debug("Location not ready yet.")
         return;
     }
-    debug("location ready")
 
     const BASE_URL = window.APP_CONFIG.url_root;
 
     setActiveButton(type)
 
     showSkeletons()
-    debug("skeletons shown")
 
     const payload = {
 
@@ -66,7 +63,6 @@ async function runSearch(type) {
         lon: userLocation.lon
 
     }
-    debug("payload generated")
 
     const response = await fetch(`${BASE_URL}/search`, {
 
@@ -79,7 +75,6 @@ async function runSearch(type) {
         body: JSON.stringify(payload)
 
     })
-    debug("payload fetched")
 
     const data = await response.json()
 
@@ -139,10 +134,3 @@ function debug(msg) {
     const el = document.getElementById("debug")
     el.innerText = msg
 }
-
-// logs whether or not the context is considered secure.
-window.addEventListener("DOMContentLoaded", () => {
-
-    debug("Secure context: " + window.isSecureContext)
-
-})

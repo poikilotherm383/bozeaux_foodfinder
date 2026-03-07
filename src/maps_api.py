@@ -2,6 +2,8 @@ import requests
 import os
 import json
 from typing import Literal
+from math import pi, cos, sqrt
+import time
 
 class MapsClient:
     url = "https://places.googleapis.com/v1/places:searchNearby"
@@ -13,12 +15,54 @@ class MapsClient:
             self.config_data = json.load(f)
         return self.config_data.get("api_key")
     
+    def _calculate_distance(self, lat: float, lon: float, userlat: float, userlon: float):
+        if lat is None or lon is None:
+            return None
+        dlat = abs(lat - userlat) * pi / 180
+        dlon = abs(lon - userlon) * pi / 180
+        d = 3858.8 * sqrt(dlat ** 2 + (cos(userlat * pi / 180) * dlon) ** 2)
+        return d
+    
+    def _find_next_closing(self, hours: dict):
+        ctime = time.localtime().tm_mday + time.localtime().tm_hour / 24 + time.localtime().tm_min / (24 * 60)
+        closings = [
+            {
+                "hour": period["close"]["hour"],
+                "minute": period["close"]["minute"],
+                "timedelta": period["close"]["date"]["day"] + period["close"]["hour"] / 24 + period["close"]["minute"] / (24 * 60) - ctime
+            }
+            for period in hours
+        ]
+        closings.sort(key = lambda x: x["timedelta"])
+        hour = closings[0]["hour"]
+        minute = closings[0]["minute"]
+        return f"""{hour - 12 if hour > 12 else hour}:{minute} {'PM' if hour // 12 == 1 else 'AM'}"""
+    
+    def _parse_results(self, results: dict, userlat: float, userlon: float):
+        open_results = [result for result in results if (result.get("currentOpeningHours") and result["currentOpeningHours"].get("openNow"))]
+        parsed_results = []
+        for result in open_results:
+            lat = result["location"].get("latitude") if result.get("location") is not None else None
+            lon = result["location"].get("longitude") if result.get("location")is not None else None
+            distance = self._calculate_distance(lat, lon, userlat, userlon)
+            parsed_results.append({
+                "name": result.get("displayName").get("text") if result.get("displayName") else None,
+                "distance": distance,
+                "address": result.get("formattedAddress"),
+                "url": result.get("websiteUri"),
+                "closes_at": self._find_next_closing(result.get("currentOpeningHours").get("periods")),
+                "lat": lat,
+                "lon": lon
+                })
+        return parsed_results
+    
     def search(self, lat: float, lon: float, type: Literal ["coffee_shop", "restaurant", "chick_fil_a"]):
         if type not in ["coffee_shop", "restaurant"]:
             raise Exception(f"Unknown type {type}")
         payload = {
             "includedPrimaryTypes": [type],
             "maxResultCount": 20,
+            "rankPreference": "DISTANCE",
             "locationRestriction": {
                 "circle": {
                     "center": {
@@ -31,7 +75,7 @@ class MapsClient:
         headers = {
             "Content-Type": "application/json",
             "X-Goog-Api-Key": self.api_key, # insert api key here
-            "X-Goog-FieldMask": "places.displayName,places.formattedAddress,places.currentOpeningHours,places.websiteUri" # mask the data to return with the request here
+            "X-Goog-FieldMask": "places.displayName,places.formattedAddress,places.currentOpeningHours,places.websiteUri,places.location" # mask the data to return with the request here
         }
         response = requests.post(
             self.url,
@@ -41,37 +85,5 @@ class MapsClient:
         if not response.status_code == 200:
             raise Exception(f"Maps API returned status code {response.status_code}, full response {response.text}")
         response = response.json()
-        outcome = []
-        for place in response.get("places"):
-            result = {
-                "name": "",
-                "distance": 0,
-                "address": "",
-                "url": "",
-                "closes_at": "",
-                "lat": 0,
-                "lon": 0
-            }
-            result["name"] = place.get("displayName").get("text")
-            result["address"] = place.get("formattedAddress")
-            result["url"] = place.get("websiteUri")
-            outcome.append(result)
-
-        return outcome
-
-if __name__ == "__main__":
-    config_path = os.path.join(os.path.dirname(__file__), "config", "config.json")
-    api_key = load_api_key(config_path)
-    response = search_nearby(api_key)
-    if response.status_code == 200:
-        result = response.json()
-        places = result.get("places", [])
-        for place in places:
-            display_name = place.get('displayName').get('text')
-            formatted_address = place.get('formattedAddress')
-            hours = place.get('currentOpeningHours')
-            if hours is not None:
-                open_now = hours.get("openNow")
-            else:
-                open_now = None
-            print(f"""{display_name} at {formatted_address}{"" if open_now is None else f", currently {'open' if open_now else 'closed'}"}""")
+        parsed_response = self._parse_results(response.get("places", []), lat, lon)
+        return parsed_response

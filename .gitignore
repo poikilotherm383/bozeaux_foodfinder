@@ -7,3 +7,4 @@ venv/
 .gitignore
 old
 src/notes.txt
+TODO.md

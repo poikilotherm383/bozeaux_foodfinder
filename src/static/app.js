@@ -46,16 +46,13 @@ function showSkeletons() {
 
 async function runSearch(type) {
 
+    debug("runSearch called")
+
     const BASE_URL = window.APP_CONFIG.url_root;
 
     setActiveButton(type)
 
     showSkeletons()
-
-//    navigator.geolocation.getCurrentPosition(async pos => {
-
- //       const lat = pos.coords.latitude
- //       const lon = pos.coords.longitude
 
         const payload = {
 
@@ -80,8 +77,6 @@ async function runSearch(type) {
         const data = await response.json()
 
         renderCards(data)
-
-//    })
 
 }
 

@@ -7,9 +7,12 @@ import json
 
 config_path = os.path.join(os.path.dirname(__file__), "config", "config.json")
 static_folder = os.path.join(os.path.dirname(__file__), "static")
+print(f"Config path at {config_path}")
+print(f"Static path at {static_folder}")
 with open(config_path, mode = "r") as file:
     config = json.load(file)
 static_url_path = config.get("static_url_path")
+print(f"Static url path is {static_url_path}")
 
 app = Flask(__name__, static_url_path = static_url_path, static_folder = static_folder)
 

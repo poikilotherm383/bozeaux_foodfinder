@@ -47,7 +47,7 @@ function showSkeletons() {
 async function runSearch(type) {
 
     if (!userLocation) {
-        console.log("Location not ready yet.");
+        debug("Location not ready yet.")
         return;
     }
     debug("location ready")

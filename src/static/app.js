@@ -39,6 +39,8 @@ function showSkeletons() {
 
 async function runSearch(type) {
 
+    const BASE_URL = window.APP_CONFIG.url_root;
+
     setActiveButton(type)
 
     showSkeletons()
@@ -56,7 +58,7 @@ async function runSearch(type) {
 
         }
 
-        const response = await fetch("/search", {
+        const response = await fetch(`${BASE_URL}/search`, {
 
             method: "POST",
 

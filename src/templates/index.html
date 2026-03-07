@@ -7,13 +7,19 @@
 
 <title>Bozeaux FoodFinder</title>
 
-<link rel="stylesheet" href="{{ stylesheet_path }}">
+<link rel="stylesheet" href="{{ url_root }}{{ url_for('static', filename = 'style.css') }}">
 
-<script defer src="{{ js_path }}"></script>
+<script defer src="{{ url_root }}{{ url_for('static', filename = 'app.js' )}}"></script>
 
 </head>
 
 <body>
+
+<script>
+        window.APP_CONFIG = {
+                url_root: "{{ url_root }}"
+        }
+</script>
 
 <header class="button-bar">
 

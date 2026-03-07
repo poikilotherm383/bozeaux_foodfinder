@@ -12,9 +12,6 @@ with open(config_path, mode = "r") as file:
     config = json.load(file)
 static_url_path = config.get("static_url_path")
 
-stylesheet_path = f"{static_url_path}style.css"
-js_path = f"{static_url_path}app.js"
-
 app = Flask(__name__, static_url_path = "/static")
 
 maps_client = MapsClient(config_path)
@@ -30,7 +27,7 @@ def home():
     else:
         theme = "dark"
 
-    return render_template("index.html", theme=theme, stylesheet_path = stylesheet_path, js_path = js_path)
+    return render_template("index.html", theme=theme, url_root = static_url_path)
 
 # flask search endpoint    
 @app.route("/search", methods=["POST"])

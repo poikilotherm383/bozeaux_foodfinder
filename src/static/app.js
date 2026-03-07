@@ -1,3 +1,12 @@
+let userLocation = null;
+
+navigator.geolocation.getCurrentPosition(pos => {
+    userLocation = {
+        lat: pos.coords.latitude,
+        lon: pos.coords.longitude
+    }
+})
+
 function setActiveButton(type) {
 
     const buttons = document.querySelectorAll(".action-button")
@@ -14,8 +23,6 @@ function setActiveButton(type) {
         document.getElementById("btn-chicken").classList.add("active")
 
 }
-
-
 
 function showSkeletons() {
 
@@ -45,16 +52,16 @@ async function runSearch(type) {
 
     showSkeletons()
 
-    navigator.geolocation.getCurrentPosition(async pos => {
+//    navigator.geolocation.getCurrentPosition(async pos => {
 
-        const lat = pos.coords.latitude
-        const lon = pos.coords.longitude
+ //       const lat = pos.coords.latitude
+ //       const lon = pos.coords.longitude
 
         const payload = {
 
             type: type,
-            lat: lat,
-            lon: lon
+            lat: userLocation.lat,
+            lon: userLocation.lon
 
         }
 
@@ -74,7 +81,7 @@ async function runSearch(type) {
 
         renderCards(data)
 
-    })
+//    })
 
 }
 

@@ -46,7 +46,10 @@ function showSkeletons() {
 
 async function runSearch(type) {
 
-    debug("runSearch called")
+    if (!userLocation) {
+        console.log("Location not ready yet.");
+        return;
+    }
 
     const BASE_URL = window.APP_CONFIG.url_root;
 

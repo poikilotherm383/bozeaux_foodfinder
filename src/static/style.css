@@ -52,7 +52,7 @@ body {
 
 /* LINKTREE STYLE BUTTONS */
 .action-button {
-    padding: 14px;
+    padding: 10px 14px;
     border-radius: 999px;
     border: 1px solid var(--border);
     background: var(--button_body);
@@ -62,6 +62,16 @@ body {
     cursor: pointer;
     transition: transform 0.08s ease,
                 box-shadow 0.1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.btn-icon {
+    width: 24px;
+    height: 24px;
+    fill: white;
+    filter: invert();
 }
 
 /* PRESS EFFECT */

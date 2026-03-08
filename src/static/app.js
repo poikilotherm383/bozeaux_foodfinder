@@ -11,11 +11,11 @@ window.addEventListener("load", () => {
 let userLocation = null;
 navigator.geolocation.getCurrentPosition(
     pos => {
+        clearTimeout(locationTimer);
         userLocation = {
             lat: pos.coords.latitude,
             lon: pos.coords.longitude
-        }
-        clearTimeout(locationTimer)
+        };
     },
     err => {
         if (err.code === err.PERMISSION_DENIED) {
@@ -23,7 +23,8 @@ navigator.geolocation.getCurrentPosition(
                 "Location access was denied. Enable it in your browser settings."
             );
         }
-    }
+    },
+    {timeout: LOCATION_TIMEOUT}
 )
 
 function setActiveButton(type) {
@@ -47,7 +48,7 @@ function showSkeletons() {
     }
 }
 
-async function fetchWithTimeout(url, options={}, timeout=8000){
+async function fetchWithTimeout(url, options={}, timeout=15000){
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeout);
     try{
@@ -91,6 +92,7 @@ async function runSearch(type) {
             body: JSON.stringify(payload)
         })
     }catch (e){
+        clearCards();
         return;
     }
     const data = await response.json()
@@ -155,7 +157,15 @@ async function runExpandedSearch(type) {
     return;
 }
 
+function clearCards(){
+    document.getElementById("card-container").innerHTML = "";
+}
+
 function renderCards(data) {
+    if(!data || data.length === 0) {
+        showModal("No places found.");
+        return;
+    }
     const container = document.getElementById("card-container")
     container.innerHTML = ""
     data.forEach(place => {
@@ -184,14 +194,11 @@ function renderCards(data) {
 }
 // shows the appropriate modal
 function showModal(message, buttons=[]) {
-
     const modal = document.getElementById("modal");
     const msg = document.getElementById("modal-message");
     const btnArea = document.getElementById("modal-buttons");
-
     msg.textContent = message;
     btnArea.innerHTML = "";
-
     buttons.forEach(btn => {
         const b = document.createElement("button");
         b.textContent = btn.text;
@@ -202,15 +209,14 @@ function showModal(message, buttons=[]) {
         b.className = "modal-button";
         btnArea.appendChild(b);
     });
-
     const okb = document.createElement("button");
     okb.textContent = "Close";
     okb.onclick = () => {
         hideModal();
+        clearCards();
     };
     okb.className = "modal-button";
     btnArea.appendChild(okb);
-
     modal.classList.remove("hidden");
 }
 

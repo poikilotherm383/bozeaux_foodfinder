@@ -1,7 +1,6 @@
 from datetime import datetime
 from flask import Flask, render_template, request, jsonify
 import os
-import requests
 from maps_api import MapsClient
 import json
 

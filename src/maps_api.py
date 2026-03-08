@@ -5,7 +5,9 @@ from math import pi, cos, sqrt
 import time
 
 def miles_to_m(miles: float):
-    return miles * 1.60934e3
+    return round(miles * 1.60934e3)
+def m_to_miles(m: float):
+    return round(m / 1.60934e3)
 
 class MapsClient:
     url = "https://places.googleapis.com/v1/places"
@@ -136,7 +138,7 @@ class MapsClient:
             raise Exception(f"Maps API returned status code {response.status_code}, full response {response.text}")
         response = response.json()
         parsed_response = self._parse_results(response.get("places", []), lat, lon)
-        return (parsed_response, radius)
+        return (parsed_response, m_to_miles(radius))
     # searches with an expanding radius 
     def search_expand(self, lat: float, lon: float, type: Literal ["coffee_shop", "restaurant", "chick_fil_a"]):
         search_radii = [miles_to_m(2), miles_to_m(5), miles_to_m(10), miles_to_m(20)]
@@ -144,4 +146,4 @@ class MapsClient:
             results = self.search(lat, lon, type, radius = radius)
             if len(results) >= 5:
                 break
-        return (results, radius)
+        return (results, m_to_miles(radius))
